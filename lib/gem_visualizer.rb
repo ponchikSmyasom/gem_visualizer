@@ -10,8 +10,12 @@ module GemVisualizer
       @bar_width = bar_width
     end
 
-    def progress
-      "[#{"=" * @total}>#{"." * (@bar_width - @total - 1)}]"
+    def total_show
+      "[#{"=" * @total}>#{"." * (@bar_width - @total - 1)}] %#{@total}"
+    end
+    
+    def update(progress)
+      @total += progress;
     end
   end
 end
