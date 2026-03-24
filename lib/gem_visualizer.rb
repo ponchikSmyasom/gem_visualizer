@@ -4,6 +4,7 @@ require_relative "gem_visualizer/version"
 
 module GemVisualizer
   class Error < StandardError; end
+  
   class ProgressBar
     def initialize(total, bar_width)
       @total = total
@@ -11,7 +12,7 @@ module GemVisualizer
     end
 
     def total_show
-      "[#{"=" * @total}>#{"." * (@bar_width - @total - 1)}] %#{@total}"
+      "[#{"=" * (@total-1)}>#{"." * (@bar_width - @total)}] %#{@total}"
     end
     
     def update(progress)
