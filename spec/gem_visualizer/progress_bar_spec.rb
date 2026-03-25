@@ -72,13 +72,13 @@ RSpec.describe GemVisualizer::ProgressBar do
       it 'показывает прогресс-бар с шириной 50 символов' do
         bar = described_class.new(25, 50)
 
-        expect(bar.total_show).to eq("[#{"=" * 24}>#{"." * 25}] %25")
+        expect(bar.total_show).to eq("[#{"=" * 24}>#{"." * 25}] %50")
       end
 
       it 'показывает прогресс-бар с шириной 20 символов' do
         bar = described_class.new(10, 20)
 
-        expect(bar.total_show).to eq("[#{"=" * 9}>#{"." * 10}] %10")
+        expect(bar.total_show).to eq("[#{"=" * 9}>#{"." * 10}] %50")
       end
     end
   end
@@ -107,11 +107,11 @@ RSpec.describe GemVisualizer::ProgressBar do
       expect(bar.total_show).to eq("[#{"=" * 99}>] %100")
     end
 
-    it 'позволяет прогрессу превысить 100%' do
+    it 'не позволяет прогрессу превысить 100%' do
       bar = described_class.new(90, 100)
       bar.update(20)
 
-      expect(bar.instance_variable_get(:@total)).to eq(110)
+      expect(bar.instance_variable_get(:@total)).to eq(100)
     end
   end
 
@@ -152,25 +152,25 @@ RSpec.describe GemVisualizer::ProgressBar do
 
   describe 'граничные случаи' do
     context 'отрицательный прогресс' do
-      it 'позволяет установить отрицательный прогресс при инициализации' do
+      it 'не позволяет установить отрицательный прогресс при инициализации' do
         bar = described_class.new(-10, 100)
 
-        expect(bar.instance_variable_get(:@total)).to eq(-10)
+        expect(bar.instance_variable_get(:@total)).to eq(0)
       end
 
-      it 'позволяет обновить до отрицательного значения' do
+      it 'не позволяет обновить до отрицательного значения' do
         bar = described_class.new(0, 100)
         bar.update(-5)
 
-        expect(bar.instance_variable_get(:@total)).to eq(-5)
+        expect(bar.instance_variable_get(:@total)).to eq(0)
       end
     end
 
     context 'нулевая ширина бара' do
-      it 'создаёт прогресс-бар с нулевой шириной' do
+      it 'не создаёт прогресс-бар с нулевой шириной' do
         bar = described_class.new(0, 0)
 
-        expect(bar.total_show).to eq("[>] %0")
+        expect(bar.total_show).to eq("[>.] %0")
       end
     end
 
@@ -178,7 +178,7 @@ RSpec.describe GemVisualizer::ProgressBar do
       it 'работает с шириной 1 символ' do
         bar = described_class.new(1, 1)
 
-        expect(bar.total_show).to eq("[>] %1")
+        expect(bar.total_show).to eq("[>] %100")
       end
     end
   end
