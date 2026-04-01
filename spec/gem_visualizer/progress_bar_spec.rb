@@ -150,6 +150,64 @@ RSpec.describe GemVisualizer::ProgressBar do
     end
   end
 
+  describe '#eta_show' do
+    it 'возвращает "Готово!" когда прогресс 100%' do
+      bar = described_class.new(10, 10)
+
+      expect(bar.eta_show).to eq("Готово!")
+    end
+
+    it 'возвращает "Осталось: --" когда прогресс ещё не начат' do
+      bar = described_class.new(0, 10)
+
+      expect(bar.eta_show).to eq("Осталось: --")
+    end
+
+    it 'показывает оставшееся время в секундах' do
+      bar = described_class.new(0, 10)
+      allow(Time).to receive(:now).and_return(Time.at(0), Time.at(0), Time.at(5))
+      bar.update(5)
+
+      expect(bar.eta_show).to eq("Осталось: 5 сек")
+    end
+
+    it 'показывает оставшееся время в минутах и секундах' do
+      bar = described_class.new(0, 200)
+      allow(Time).to receive(:now).and_return(Time.at(0), Time.at(0), Time.at(60))
+      bar.update(100)
+
+      expect(bar.eta_show).to eq("Осталось: 1 мин 0 сек")
+    end
+
+    it 'показывает оставшееся время в часах и минутах' do
+      bar = described_class.new(0, 7200)
+      allow(Time).to receive(:now).and_return(Time.at(0), Time.at(0), Time.at(3600))
+      bar.update(3600)
+
+      expect(bar.eta_show).to eq("Осталось: 1 ч 0 мин")
+    end
+
+    it 'использует кастомные надписи' do
+      bar = described_class.new(0, 10, labels: { prefix: "ETA:", seconds: "s", minutes: "m", hours: "h", done: "Done!" })
+      allow(Time).to receive(:now).and_return(Time.at(0), Time.at(0), Time.at(5))
+      bar.update(5)
+
+      expect(bar.eta_show).to eq("ETA: 5 s")
+    end
+
+    it 'возвращает кастомный done когда прогресс 100%' do
+      bar = described_class.new(10, 10, labels: { done: "Done!" })
+
+      expect(bar.eta_show).to eq("Done!")
+    end
+
+    it 'инициализация принимает labels и объединяет с дефолтными' do
+      bar = described_class.new(0, 10, labels: { prefix: "Left:" })
+
+      expect(bar.eta_show).to eq("Left: --")
+    end
+  end
+
   describe 'граничные случаи' do
     context 'отрицательный прогресс' do
       it 'не позволяет установить отрицательный прогресс при инициализации' do

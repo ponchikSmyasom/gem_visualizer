@@ -27,6 +27,28 @@ puts "\n\n=== Пример 3: Разные размеры (50% заполнен�
   puts "Ширина #{width}: #{bar3.total_show}"
 end
 
+puts "\n=== Пример 5: Прогресс с ETA ==="
+bar5 = GemVisualizer::ProgressBar.new(0, 20)
+
+20.times do
+  bar5.update(1)
+  bar5.update_line("#{bar5.total_show} | #{bar5.eta_show}")
+  sleep(0.2)
+end
+puts
+
+puts "\n=== Пример 6: ETA с кастомными надписями ==="
+bar6 = GemVisualizer::ProgressBar.new(0, 20,
+                                       labels: { prefix: "ETA:", seconds: "s", minutes: "m", hours: "h",
+                                                 done: "Done!" })
+
+20.times do
+  bar6.update(1)
+  bar6.update_line("#{bar6.total_show} | #{bar6.eta_show}")
+  sleep(0.2)
+end
+puts
+
 puts "\n=== Пример 4: Граничные случаи ==="
 bar4 = GemVisualizer::ProgressBar.new(0, 10)
 puts "Начало: #{bar4.total_show}"
